@@ -3,121 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Motor</title>
+    <title>RAHARJO MOTOR TUBAN</title>
     <link rel="stylesheet" href="styles.css">
-
-    <style>
-        .detail-wrapper {
-            max-width: 520px;
-            margin: auto;
-            margin-top: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-        }
-        .detail-wrapper img {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            max-height: 270px;
-            object-fit: cover;
-        }
-        .detail-wrapper h2 {
-            margin: 0;
-            font-size: 1.3rem;
-        }
-        .detail-wrapper p {
-            margin: 4px 0;
-            font-size: 0.95rem;
-            color: #333;
-        }
-        .btn-back {
-            display: inline-block;
-            padding: 10px;
-            background: #555;
-            color: white;
-            margin-top: 15px;
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
-        }
-        .report-btn {
-            background: #d90429;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            display: block;
-            text-align: center;
-            margin-top: 10px;
-            text-decoration: none;
-        }
-    </style>
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
 <header>
-    <h2>Detail Motor</h2>
+    <h1>RAHARJO MOTOR TUBAN</h1>
+    <p>Jual Beli Motor Berkualitas</p>
 </header>
 
-<main id="detail-container" style="padding:15px;">
-    Memuat...
+<main>
+
+<section id="seller">
+    <h2>Upload Motor Baru</h2>
+    <form id="uploadForm">
+
+        <label>Foto Motor</label>
+        <input type="file" id="image" accept="image/*" required>
+
+        <label>Merek Motor</label>
+        <input type="text" id="brand" placeholder="Contoh: Honda Beat" required>
+
+        <label>Tahun</label>
+        <input type="number" id="year" placeholder="Contoh: 2020" required>
+
+        <label>Kilometer</label>
+        <input type="number" id="km" placeholder="Contoh: 15000" required>
+
+        <label>Kondisi</label>
+        <select id="condition" required>
+            <option value="Istimewa">Istimewa</option>
+            <option value="Bagus">Bagus</option>
+            <option value="Standar">Standar</option>
+        </select>
+
+        <label>Harga</label>
+        <input type="number" id="price" placeholder="Contoh: 14500000" required>
+
+        <label>Deskripsi Motor</label>
+        <textarea id="desc" placeholder="Keterangan tambahan" required></textarea>
+
+        <label>No. HP Penjual</label>
+        <input type="number" id="sellerPhone" placeholder="628xxxx" required>
+
+        <button type="submit">Upload Motor</button>
+    </form>
+</section>
+
+<section id="products">
+    <h2>Daftar Motor Dijual</h2>
+    <div id="product-list"></div>
+</section>
+
 </main>
+
+<footer class="footer">
+    <p><strong>BEYGOCK MANAGEMENT</strong><br>Binangun, Singgahan, Tuban</p>
+    <p class="warning">
+        🛑 Platform ini bebas digunakan siapa saja untuk mengunggah dan menjual motor.  
+        Admin tidak memverifikasi penjual dan <strong>tidak bertanggung jawab</strong> atas kerugian, penipuan, atau masalah transaksi.  
+        Demi keamanan, <strong>hindari transfer uang</strong> dan lakukan <strong>COD</strong> secara langsung.
+    </p>
+</footer>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<!-- Config & Logic -->
 <script src="firebase-config.js"></script>
-
-<script>
-const db = firebase.firestore();
-
-// Ambil ID motor dari URL
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-const container = document.getElementById("detail-container");
-
-if (!id) {
-    container.innerHTML = "<p>ID motor tidak ditemukan.</p>";
-}
-
-// Ambil data motor dari Firestore
-db.collection("motor").doc(id).get().then(doc => {
-    if (!doc.exists) {
-        container.innerHTML = "<p>Data motor tidak ditemukan.</p>";
-        return;
-    }
-
-    const d = doc.data();
-
-    container.innerHTML = `
-        <div class="detail-wrapper">
-            <img src="${d.imageUrl}" alt="Motor">
-
-            <h2>${d.brand} (${d.year})</h2>
-
-            <p><b>Kilometer:</b> ${d.km} km</p>
-            <p><b>Kondisi:</b> ${d.condition}</p>
-            <p><b>Harga:</b> <span style="color:#1b8f1b;font-weight:bold;">Rp ${d.price}</span></p>
-
-            <p><b>Deskripsi:</b><br>${d.desc}</p>
-
-            <p><b>Nomor Penjual:</b> ${d.sellerPhone}</p>
-
-            <a class="btn-wa"
-               href="https://wa.me/${d.sellerPhone}?text=Halo,%20saya%20lihat%20motor%20${d.brand}"
-               target="_blank">Hubungi via WhatsApp</a>
-
-            <a class="report-btn"
-               href="https://wa.me/6285735192783?text=LAPOR%20POSTINGAN%20ID:%20${id}"
-               target="_blank">Laporkan Iklan</a>
-
-            <a href="index.html" class="btn-back">⬅ Kembali</a>
-        </div>
-    `;
-});
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>

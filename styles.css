@@ -1,87 +1,21 @@
-/* ===== MODAL OVERLAY ===== */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-}
-
-/* ===== MODAL BOX ===== */
-.modal-box {
-    background: white;
-    width: 90%;
-    max-width: 420px;
-    padding: 22px;
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    animation: modalFade 0.25s ease;
-    text-align: center;
-}
-
-.modal-box h3 {
-    margin-top: 0;
-    font-size: 22px;
-    font-weight: 600;
-    color: #2b8a3e;
-}
-
-.modal-box p {
-    color: #444;
-    margin: 12px 0 20px;
-    font-size: 15px;
-}
-
-/* ===== MODAL BUTTONS ===== */
-.modal-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 15px;
-}
-
-.modal-buttons button {
-    flex: 1;
-    padding: 12px;
-    font-size: 15px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s;
-}
-
-.modal-cancel {
-    background: #ccc;
-    color: #222;
-}
-
-.modal-cancel:hover {
-    background: #b9b9b9;
-}
-
-.modal-confirm {
-    background: #d90429;
-    color: white;
-}
-
-.modal-confirm:hover {
-    background: #b70323;
-}
-
-/* ===== ANIMATION ===== */
-@keyframes modalFade {
-    from {
-        opacity: 0;
-        transform: scale(0.85);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
+body{font-family:'Poppins',sans-serif;margin:0;padding:16px;background:#f6f7fb}
+header{background:#2b8a3e;color:white;padding:20px;text-align:center;border-bottom-left-radius:20px;border-bottom-right-radius:20px;box-shadow:0 3px 10px rgba(0,0,0,0.2)}
+header h1{margin:0;font-size:26px;font-weight:600}
+main{margin-top:12px;display:flex;flex-direction:column;gap:30px}
+form{display:flex;flex-direction:column;gap:12px;max-width:640px}
+input,textarea,select,button{padding:12px;border-radius:10px;border:1px solid #ccc;font-size:15px}
+button{background:#2b8a3e;color:white;border:none;cursor:pointer;font-weight:600;transition:0.2s}
+button:hover{background:#237234}
+#product-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.card{background:white;padding:12px;border-radius:14px;box-shadow:0 3px 12px rgba(0,0,0,0.12);display:flex;flex-direction:column;gap:8px;transition:0.25s}
+.card:hover{transform:translateY(-5px);box-shadow:0 6px 18px rgba(0,0,0,0.18)}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:10px}
+.card h3{margin:0;color:#222;font-size:18px}
+.card p{margin:0;color:#444;font-size:0.95rem}
+.btn-wa{display:block;text-align:center;background:#25D366;color:white;font-weight:600;border-radius:10px;text-decoration:none;padding:10px;transition:0.2s;margin-top:5px}
+.btn-wa:hover{filter:brightness(0.9)}
+.footer{background:#2b8a3e;color:white;margin-top:40px;padding:20px;text-align:center;border-top-left-radius:20px;border-top-right-radius:20px}
+.warning{background:#ffdddd;padding:12px;margin-top:10px;border-radius:10px;color:#aa0000;font-weight:600}
+.edit-btn, .delete-btn{padding:8px;border-radius:8px;border:none;margin-top:5px;cursor:pointer}
+.edit-btn{background:#f4c20d;color:white}
+.delete-btn{background:#e63946;color:white}
