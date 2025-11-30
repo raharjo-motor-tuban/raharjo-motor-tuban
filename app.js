@@ -1,92 +1,113 @@
-// --- Ambil elemen ---
-const uploadInput = document.getElementById("upload");
-const titleInput = document.getElementById("titleInput");
-const priceInput = document.getElementById("priceInput");
-const uploadBtn = document.getElementById("uploadBtn");
-const gallery = document.getElementById("gallery");
+// =======================================
+// PREVIEW FOTO
+// =======================================
+document.getElementById("image").addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+        const preview = document.createElement("img");
+        preview.src = URL.createObjectURL(file);
+        preview.style.width = "100%";
+        preview.style.borderRadius = "10px";
+        preview.style.marginTop = "10px";
 
-// --- Load data dari localStorage ---
-let items = JSON.parse(localStorage.getItem("motorData")) || [];
-renderGallery();
+        const old = document.getElementById("previewImg");
+        if (old) old.remove();
 
-
-// =============== UPLOAD GAMBAR ===============
-uploadBtn.addEventListener("click", () => {
-    const file = uploadInput.files[0];
-    const title = titleInput.value.trim();
-    const price = priceInput.value.trim();
-
-    if (!file) {
-        alert("Pilih gambar dulu");
-        return;
+        preview.id = "previewImg";
+        this.insertAdjacentElement("afterend", preview);
     }
-    if (!title || !price) {
-        alert("Judul & Harga harus diisi");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const newItem = {
-            id: Date.now(),
-            img: e.target.result, // base64
-            title,
-            price
-        };
-
-        items.push(newItem);
-        saveData();
-        renderGallery();
-
-        uploadInput.value = "";
-        titleInput.value = "";
-        priceInput.value = "";
-    };
-
-    reader.readAsDataURL(file);
 });
 
 
-// =============== SIMPAN DATA ===============
-function saveData() {
-    localStorage.setItem("motorData", JSON.stringify(items));
-}
+// =======================================
+// UPLOAD MOTOR + GAMBAR → IMGBB
+// =======================================
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
+    const file = document.getElementById("image").files[0];
+    if (!file) return alert("Pilih foto motor dulu!");
 
-// =============== TAMPILKAN DATA ===============
-function renderGallery() {
-    gallery.innerHTML = "";
+    const apiKey = "69d0dfef34670e4f045bcad4aecb146f"; 
+    const form = new FormData();
+    form.append("image", file);
 
-    items.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "item";
-
-        div.innerHTML = `
-            <img src="${item.img}" class="preview">
-            <input class="editTitle" value="${item.title}">
-            <input class="editPrice" value="${item.price}">
-            <button class="deleteBtn">Hapus</button>
-        `;
-
-        // Edit Judul
-        div.querySelector(".editTitle").addEventListener("input", e => {
-            item.title = e.target.value;
-            saveData();
-        });
-
-        // Edit Harga
-        div.querySelector(".editPrice").addEventListener("input", e => {
-            item.price = e.target.value;
-            saveData();
-        });
-
-        // Hapus Item
-        div.querySelector(".deleteBtn").addEventListener("click", () => {
-            items = items.filter(i => i.id !== item.id);
-            saveData();
-            renderGallery();
-        });
-
-        gallery.appendChild(div);
+    // Upload ke imgbb
+    const upload = await fetch("https://api.imgbb.com/1/upload?key=" + apiKey, {
+        method: "POST",
+        body: form
     });
+
+    const result = await upload.json();
+    if (!result.data || !result.data.url) {
+        return alert("Gagal upload gambar!");
+    }
+
+    const imageUrl = result.data.url;
+
+    // Ambil semua input
+    const data = {
+        brand: document.getElementById("brand").value,
+        year: document.getElementById("year").value,
+        km: document.getElementById("km").value,
+        condition: document.getElementById("condition").value,
+        price: document.getElementById("price").value,
+        desc: document.getElementById("desc").value,
+        sellerPhone: document.getElementById("sellerPhone").value,
+        image: imageUrl,
+        time: Date.now()
+    };
+
+    // Simpan ke Firestore
+    await db.collection("products").add(data);
+
+    alert("Motor berhasil diupload!");
+    location.reload();
+});
+
+
+// =======================================
+// TAMPILKAN LIST MOTOR + TOMBOL HAPUS
+// =======================================
+db.collection("products")
+    .orderBy("time", "desc")
+    .onSnapshot((snap) => {
+        const list = document.getElementById("product-list");
+        list.innerHTML = "";
+
+        snap.forEach((doc) => {
+            const m = doc.data();
+            const id = doc.id;
+
+            list.innerHTML += `
+                <div class="card">
+                    <img src="${m.image}" class="motor-img">
+                    <h3>${m.brand} (${m.year})</h3>
+                    <p><strong>KM:</strong> ${m.km}</p>
+                    <p><strong>Kondisi:</strong> ${m.condition}</p>
+                    <p><strong>Harga:</strong> Rp ${m.price}</p>
+                    <p>${m.desc}</p>
+
+                    <a href="https://wa.me/${m.sellerPhone}" class="btn-wa">
+                        Hubungi Penjual
+                    </a>
+
+                    <button class="btn-del" onclick="deleteMotor('${id}')">
+                        Hapus
+                    </button>
+                </div>
+            `;
+        });
+    });
+
+
+// =======================================
+// FUNGSI HAPUS MOTOR
+// =======================================
+async function deleteMotor(id) {
+    const yakin = confirm("Yakin ingin menghapus motor ini?");
+    if (!yakin) return;
+
+    await db.collection("products").doc(id).delete();
+    alert("Motor dihapus!");
 }
