@@ -1,4 +1,4 @@
-// Konfigurasi Firebase kamu
+// Konfigurasi Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyASx1L6_KVL_S0XJfb5Oh3FwM0cOYTronQ",
     authDomain: "raharjo-motor-tuban.firebaseapp.com",
@@ -11,3 +11,6 @@ const firebaseConfig = {
 
 // Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Inisialisasi Firestore
+const db = firebase.firestore();
