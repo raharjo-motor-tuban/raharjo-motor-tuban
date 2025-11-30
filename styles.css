@@ -1,21 +1,176 @@
-body{font-family:'Poppins',sans-serif;margin:0;padding:16px;background:#f6f7fb}
-header{background:#2b8a3e;color:white;padding:20px;text-align:center;border-bottom-left-radius:20px;border-bottom-right-radius:20px;box-shadow:0 3px 10px rgba(0,0,0,0.2)}
-header h1{margin:0;font-size:26px;font-weight:600}
-main{margin-top:12px;display:flex;flex-direction:column;gap:30px}
-form{display:flex;flex-direction:column;gap:12px;max-width:640px}
-input,textarea,select,button{padding:12px;border-radius:10px;border:1px solid #ccc;font-size:15px}
-button{background:#2b8a3e;color:white;border:none;cursor:pointer;font-weight:600;transition:0.2s}
-button:hover{background:#237234}
-#product-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
-.card{background:white;padding:12px;border-radius:14px;box-shadow:0 3px 12px rgba(0,0,0,0.12);display:flex;flex-direction:column;gap:8px;transition:0.25s}
-.card:hover{transform:translateY(-5px);box-shadow:0 6px 18px rgba(0,0,0,0.18)}
-.card img{width:100%;height:180px;object-fit:cover;border-radius:10px}
-.card h3{margin:0;color:#222;font-size:18px}
-.card p{margin:0;color:#444;font-size:0.95rem}
-.btn-wa{display:block;text-align:center;background:#25D366;color:white;font-weight:600;border-radius:10px;text-decoration:none;padding:10px;transition:0.2s;margin-top:5px}
-.btn-wa:hover{filter:brightness(0.9)}
-.footer{background:#2b8a3e;color:white;margin-top:40px;padding:20px;text-align:center;border-top-left-radius:20px;border-top-right-radius:20px}
-.warning{background:#ffdddd;padding:12px;margin-top:10px;border-radius:10px;color:#aa0000;font-weight:600}
-.edit-btn, .delete-btn{padding:8px;border-radius:8px;border:none;margin-top:5px;cursor:pointer}
-.edit-btn{background:#f4c20d;color:white}
-.delete-btn{background:#e63946;color:white}
+/* ================= GLOBAL ================= */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 16px;
+    background: #f6f7fb;
+    color: #222;
+}
+
+h1, h2 {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* ================= HEADER ================= */
+header {
+    background: #2b8a3e;
+    color: white;
+    padding: 22px;
+    text-align: center;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+header h1 {
+    font-size: 26px;
+}
+
+/* ================= MAIN LAYOUT ================= */
+main {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* ================= FORM ================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 650px;
+}
+
+input,
+textarea,
+select,
+button {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    background: white;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+button {
+    background: #2b8a3e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #237234;
+}
+
+/* ================= PRODUCT GRID ================= */
+#product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+/* ================= PRODUCT CARD ================= */
+.card {
+    background: white;
+    padding: 14px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: 0.25s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.card h3 {
+    margin: 0;
+    color: #222;
+    font-size: 18px;
+}
+
+.card p {
+    margin: 0;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+/* ================= WHATSAPP BUTTON ================= */
+.btn-wa {
+    display: block;
+    text-align: center;
+    background: #25D366;
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    padding: 10px;
+    transition: 0.2s;
+    margin-top: 5px;
+}
+
+.btn-wa:hover {
+    filter: brightness(0.9);
+}
+
+/* ================= ACTION BUTTONS (EDIT / DELETE) ================= */
+.edit-btn,
+.delete-btn {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    width: 100%;
+}
+
+.edit-btn {
+    background: #f4c20d;
+}
+
+.delete-btn {
+    background: #e63946;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+    background: #2b8a3e;
+    color: white;
+    margin-top: 40px;
+    padding: 22px;
+    text-align: center;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    line-height: 1.5;
+}
+
+.warning {
+    background: #ffdddd;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 10px;
+    color: #aa0000;
+    font-weight: 600;
+}
