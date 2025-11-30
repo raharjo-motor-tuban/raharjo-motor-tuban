@@ -1,95 +1,103 @@
-// =======================================
-// PREVIEW FOTO
-// =======================================
-document.getElementById("image").addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-        const preview = document.createElement("img");
-        preview.src = URL.createObjectURL(file);
-        preview.style.width = "100%";
-        preview.style.borderRadius = "10px";
-        preview.style.marginTop = "10px";
+// Firebase Config
+const firebaseConfig = {
+    apiKey: "69d0dfef34670e4f045bcad4aecb146f",
+    authDomain: "raharjo-motor-tuban.firebaseapp.com",
+    projectId: "raharjo-motor-tuban",
+    storageBucket: "raharjo-motor-tuban.appspot.com",
+    messagingSenderId: "392547240984",
+    appId: "1:392547240984:web:8c7ec5f0b25225a066c76d"
+};
 
-        const old = document.getElementById("previewImg");
-        if (old) old.remove();
+// Init Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-        preview.id = "previewImg";
-        this.insertAdjacentElement("afterend", preview);
-    }
-});
+// Form Tambah
+const form = document.getElementById("motorForm");
+const list = document.getElementById("motorList");
 
+// UPLOAD GAMBAR → STORAGE
+async function uploadImage(file) {
+    const filename = Date.now() + "_" + file.name;
+    const ref = storage.ref("motor/" + filename);
+    await ref.put(file);
+    return await ref.getDownloadURL();
+}
 
-// =======================================
-// UPLOAD MOTOR
-// =======================================
-document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+// SIMPAN MOTOR
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const file = document.getElementById("image").files[0];
-    if (!file) return alert("Pilih foto motor dulu!");
+    const nama = document.getElementById("nama").value;
+    const harga = document.getElementById("harga").value;
+    const tahun = document.getElementById("tahun").value;
+    const wa = document.getElementById("wa").value;
+    const file = document.getElementById("gambar").files[0];
 
-    const apiKey = "69d0dfef34670e4f045bcad4aecb146f";
-    const form = new FormData();
-    form.append("image", file);
-
-    const upload = await fetch("https://api.imgbb.com/1/upload?key=" + apiKey, {
-        method: "POST",
-        body: form
-    });
-
-    const result = await upload.json();
-
-    console.log(result); // DEBUG (biar kelihatan isi realnya)
-
-    // gunakan display_url (paling stabil)
-    const imageUrl = result?.data?.display_url;
-
-    if (!imageUrl) {
-        return alert("Gagal upload gambar!");
+    if (!file) {
+        alert("Upload gambar dulu!");
+        return;
     }
 
-    // Ambil data form
-    const data = {
-        brand: document.getElementById("brand").value,
-        year: document.getElementById("year").value,
-        km: document.getElementById("km").value,
-        condition: document.getElementById("condition").value,
-        price: document.getElementById("price").value,
-        desc: document.getElementById("desc").value,
-        sellerPhone: document.getElementById("sellerPhone").value,
-        image: imageUrl,
-        time: Date.now()
-    };
+    const imageUrl = await uploadImage(file);
 
-    await db.collection("products").add(data);
+    await db.collection("motor").add({
+        nama,
+        harga,
+        tahun,
+        wa,
+        imageUrl,
+        createdAt: Date.now()
+    });
 
-    alert("Motor berhasil diupload!");
-    location.reload();
+    form.reset();
 });
 
-
-// =======================================
-// LIST MOTOR
-// =======================================
-db.collection("products")
-    .orderBy("time", "desc")
-    .onSnapshot((snap) => {
-        const list = document.getElementById("product-list");
+// TAMPILKAN LIST MOTOR
+function loadMotor() {
+    db.collection("motor").orderBy("createdAt", "desc").onSnapshot((res) => {
         list.innerHTML = "";
-
-        snap.forEach((doc) => {
-            const m = doc.data();
-
+        res.forEach((doc) => {
+            const data = doc.data();
             list.innerHTML += `
-                <div class="card">
-                    <img src="${m.image}" style="width:100%;border-radius:10px;">
-                    <h3>${m.brand} (${m.year})</h3>
-                    <p><strong>KM:</strong> ${m.km}</p>
-                    <p><strong>Kondisi:</strong> ${m.condition}</p>
-                    <p><strong>Harga:</strong> Rp ${m.price}</p>
-                    <p>${m.desc}</p>
-                    <a href="https://wa.me/${m.sellerPhone}" class="btn-wa">Hubungi Penjual</a>
+                <div class="item">
+                    <img src="${data.imageUrl}" alt="${data.nama}" />
+                    <h3>${data.nama}</h3>
+                    <p>Harga: ${data.harga}</p>
+                    <p>Tahun: ${data.tahun}</p>
+                    <p>WA: ${data.wa}</p>
+
+                    <button onclick="editMotor('${doc.id}')">Edit</button>
+                    <button onclick="deleteMotor('${doc.id}', '${data.imageUrl}')">Hapus</button>
                 </div>
             `;
         });
     });
+}
+loadMotor();
+
+// EDIT MOTOR
+function editMotor(id) {
+    const newNama = prompt("Nama baru:");
+    const newHarga = prompt("Harga baru:");
+    const newTahun = prompt("Tahun baru:");
+    const newWa = prompt("Nomor WA baru:");
+
+    db.collection("motor").doc(id).update({
+        nama: newNama,
+        harga: newHarga,
+        tahun: newTahun,
+        wa: newWa
+    });
+}
+
+// HAPUS MOTOR + HAPUS GAMBAR STORAGE
+async function deleteMotor(id, imageUrl) {
+    if (!confirm("Yakin hapus?")) return;
+
+    await db.collection("motor").doc(id).delete();
+
+    const pictureRef = storage.refFromURL(imageUrl);
+    await pictureRef.delete();
+}
