@@ -3,55 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> MOTOR BEKAS TUBAN</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Motor Bekas Tuban | Jual Beli Motor Tuban Jawa Timur</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Tempat jual beli motor bekas area Tuban. Bebas upload motor. Harga jujur. COD aman.">
+    <meta name="keywords" content="motor bekas tuban, jual beli motor tuban, showroom motor bekas tuban, cod tuban">
+    <meta name="author" content="Beygock Management">
+
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
 <header>
-    <h1> TEMPAT JUAL BELI MOTOR BEKAS AREA TUBAN JAWA TIMUR  </h1>
-    <p>Jual Beli Tukar tambah Motor Bekas Berkualitas area TUBAN dan Sekitarnya </p>
+    <h1>MOTOR BEKAS TUBAN</h1>
+    <p>Jual beli & tukar tambah motor bekas berkualitas area Tuban dan sekitarnya.</p>
 </header>
 
 <main>
 
+<!-- ================= Upload Motor ================= -->
 <section id="seller">
     <h2>Upload Motor Baru</h2>
+
     <form id="uploadForm">
 
-        <label>Foto Motor</label>
+        <label for="image">Foto Motor</label>
         <input type="file" id="image" accept="image/*" required>
 
-        <label>Merek Motor</label>
-        <input type="text" id="brand" placeholder="Contoh: Honda Beat" required>
+        <label for="brand">Merek Motor</label>
+        <input type="text" id="brand" placeholder="Honda Beat, Vario, Nmax..." required>
 
-        <label>Tahun</label>
-        <input type="number" id="year" placeholder="Contoh: 2020" required>
+        <label for="year">Tahun</label>
+        <input type="number" id="year" min="2000" max="2025" required>
 
-        <label>Kilometer</label>
-        <input type="number" id="km" placeholder="Contoh: 15000" required>
+        <label for="km">Kilometer</label>
+        <input type="number" id="km" min="0" required>
 
-        <label>Kondisi</label>
+        <label for="condition">Kondisi</label>
         <select id="condition" required>
             <option value="Istimewa">Istimewa</option>
             <option value="Bagus">Bagus</option>
             <option value="Standar">Standar</option>
         </select>
 
-        <label>Harga</label>
-        <input type="number" id="price" placeholder="Contoh: 14500000" required>
+        <label for="price">Harga (Rp)</label>
+        <input type="number" id="price" min="500000" required>
 
-        <label>Deskripsi Motor</label>
-        <textarea id="desc" placeholder="Keterangan tambahan" required></textarea>
+        <label for="desc">Deskripsi Motor</label>
+        <textarea id="desc" placeholder="Keterangan tambahan motor..." required></textarea>
 
-        <label>No. HP Penjual</label>
-        <input type="number" id="sellerPhone" placeholder="628xxxx" required>
+        <label for="sellerPhone">No. HP Penjual</label>
+        <input type="tel" id="sellerPhone" placeholder="628XXXXXXXXX" pattern="628[0-9]{7,12}" required>
 
         <button type="submit">Upload Motor</button>
     </form>
 </section>
 
+<!-- ================= List Motor ================= -->
 <section id="products">
     <h2>Daftar Motor Dijual</h2>
     <div id="product-list"></div>
@@ -59,12 +72,15 @@
 
 </main>
 
+<!-- ================= Footer ================= -->
 <footer class="footer">
-    <p><strong> JIKA INGIN MEMBERIKAN KOMISI KE KAMI HUB BEYGOCK MANAGEMENT 089659833666 </strong><br>Binangun, Singgahan, Tuban</p>
+    <p><strong>Untuk komisi hubungi: Beygock Management - 0896 5983 3666</strong><br>
+    Binangun, Singgahan, Tuban</p>
+
     <p class="warning">
-        🛑 Platform ini bebas digunakan siapa saja untuk mengunggah dan menjual motor.  
-        Admin tidak memverifikasi penjual dan <strong>tidak bertanggung jawab</strong> atas kerugian, penipuan, atau masalah transaksi.  
-        Demi keamanan, <strong>hindari transfer uang</strong> dan lakukan <strong>COD</strong> secara langsung.
+        🛑 Platform ini bebas digunakan siapa saja untuk mengunggah motor.<br>
+        Admin <strong>tidak memverifikasi penjual</strong> & tidak bertanggung jawab atas kerugian atau penipuan.<br>
+        Demi keamanan, lakukan <strong>COD</strong> dan hindari transfer uang.
     </p>
 </footer>
 
@@ -72,7 +88,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-<!-- Config & Logic -->
+<!-- Config & App Logic -->
 <script src="firebase-config.js"></script>
 <script src="app.js"></script>
 
