@@ -1,0 +1,87 @@
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* ===== MODAL BOX ===== */
+.modal-box {
+    background: white;
+    width: 90%;
+    max-width: 420px;
+    padding: 22px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    animation: modalFade 0.25s ease;
+    text-align: center;
+}
+
+.modal-box h3 {
+    margin-top: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #2b8a3e;
+}
+
+.modal-box p {
+    color: #444;
+    margin: 12px 0 20px;
+    font-size: 15px;
+}
+
+/* ===== MODAL BUTTONS ===== */
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.modal-cancel {
+    background: #ccc;
+    color: #222;
+}
+
+.modal-cancel:hover {
+    background: #b9b9b9;
+}
+
+.modal-confirm {
+    background: #d90429;
+    color: white;
+}
+
+.modal-confirm:hover {
+    background: #b70323;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes modalFade {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

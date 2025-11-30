@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Motor</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        .detail-wrapper {
+            max-width: 520px;
+            margin: auto;
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+        }
+        .detail-wrapper img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            max-height: 270px;
+            object-fit: cover;
+        }
+        .detail-wrapper h2 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        .detail-wrapper p {
+            margin: 4px 0;
+            font-size: 0.95rem;
+            color: #333;
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 10px;
+            background: #555;
+            color: white;
+            margin-top: 15px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .report-btn {
+            background: #d90429;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>Detail Motor</h2>
+</header>
+
+<main id="detail-container" style="padding:15px;">
+    Memuat...
+</main>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+const db = firebase.firestore();
+
+// Ambil ID motor dari URL
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const container = document.getElementById("detail-container");
+
+if (!id) {
+    container.innerHTML = "<p>ID motor tidak ditemukan.</p>";
+}
+
+// Ambil data motor dari Firestore
+db.collection("motor").doc(id).get().then(doc => {
+    if (!doc.exists) {
+        container.innerHTML = "<p>Data motor tidak ditemukan.</p>";
+        return;
+    }
+
+    const d = doc.data();
+
+    container.innerHTML = `
+        <div class="detail-wrapper">
+            <img src="${d.imageUrl}" alt="Motor">
+
+            <h2>${d.brand} (${d.year})</h2>
+
+            <p><b>Kilometer:</b> ${d.km} km</p>
+            <p><b>Kondisi:</b> ${d.condition}</p>
+            <p><b>Harga:</b> <span style="color:#1b8f1b;font-weight:bold;">Rp ${d.price}</span></p>
+
+            <p><b>Deskripsi:</b><br>${d.desc}</p>
+
+            <p><b>Nomor Penjual:</b> ${d.sellerPhone}</p>
+
+            <a class="btn-wa"
+               href="https://wa.me/${d.sellerPhone}?text=Halo,%20saya%20lihat%20motor%20${d.brand}"
+               target="_blank">Hubungi via WhatsApp</a>
+
+            <a class="report-btn"
+               href="https://wa.me/6285735192783?text=LAPOR%20POSTINGAN%20ID:%20${id}"
+               target="_blank">Laporkan Iklan</a>
+
+            <a href="index.html" class="btn-back">⬅ Kembali</a>
+        </div>
+    `;
+});
+</script>
+
+</body>
+</html>
