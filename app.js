@@ -10,7 +10,6 @@ document.getElementById("image").addEventListener("change", function () {
         preview.style.borderRadius = "10px";
         preview.style.marginTop = "10px";
 
-        // hapus preview lama
         const old = document.getElementById("previewImg");
         if (old) old.remove();
 
@@ -21,7 +20,7 @@ document.getElementById("image").addEventListener("change", function () {
 
 
 // =======================================
-// UPLOAD MOTOR
+// UPLOAD MOTOR BARU
 // =======================================
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -29,7 +28,6 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     const file = document.getElementById("image").files[0];
     if (!file) return alert("Pilih foto motor dulu!");
 
-    // Upload foto ke imgbb
     const apiKey = "69d0dfef34670e4f045bcad4aecb146f";
     const form = new FormData();
     form.append("image", file);
@@ -40,14 +38,10 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     });
 
     const result = await upload.json();
-
-    if (!result.data || !result.data.url) {
-        return alert("Gagal upload gambar!");
-    }
+    if (!result.data || !result.data.url) return alert("Gagal upload gambar!");
 
     const imageUrl = result.data.url;
 
-    // Ambil Data Form
     const data = {
         brand: document.getElementById("brand").value,
         year: document.getElementById("year").value,
@@ -60,12 +54,45 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
         time: Date.now()
     };
 
-    // Simpan ke Firestore
     await db.collection("products").add(data);
 
     alert("Motor berhasil diupload!");
     location.reload();
 });
+
+
+// =======================================
+// HAPUS MOTOR
+// =======================================
+function deleteMotor(id) {
+    if (confirm("Yakin ingin menghapus motor ini?")) {
+        db.collection("products").doc(id).delete();
+    }
+}
+
+
+// =======================================
+// EDIT MOTOR (bebas ubah)
+// =======================================
+function editMotor(id) {
+    const newBrand = prompt("Merek motor:");
+    const newYear = prompt("Tahun motor:");
+    const newKM = prompt("Kilometer:");
+    const newCondition = prompt("Kondisi:");
+    const newPrice = prompt("Harga (Rp):");
+    const newDesc = prompt("Deskripsi:");
+    const newPhone = prompt("Nomor HP:");
+
+    db.collection("products").doc(id).update({
+        brand: newBrand,
+        year: newYear,
+        km: newKM,
+        condition: newCondition,
+        price: newPrice,
+        desc: newDesc,
+        sellerPhone: newPhone
+    });
+}
 
 
 // =======================================
@@ -79,6 +106,7 @@ db.collection("products")
 
     snap.forEach((doc) => {
         const m = doc.data();
+        const id = doc.id;
 
         list.innerHTML += `
             <div class="card">
@@ -88,7 +116,13 @@ db.collection("products")
                 <p><strong>Kondisi:</strong> ${m.condition}</p>
                 <p><strong>Harga:</strong> Rp ${m.price}</p>
                 <p>${m.desc}</p>
+
                 <a href="https://wa.me/${m.sellerPhone}" class="btn-wa">Hubungi Penjual</a>
+
+                <div class="admin-btns">
+                    <button onclick="editMotor('${id}')" class="btn-edit">EDIT</button>
+                    <button onclick="deleteMotor('${id}')" class="btn-delete">HAPUS</button>
+                </div>
             </div>
         `;
     });
