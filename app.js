@@ -15,7 +15,6 @@ form.addEventListener("submit", async (e) => {
     if (!imageFile) return alert("Upload foto dulu!");
 
     try {
-        // Upload gambar ke ImgBB
         const formData = new FormData();
         formData.append("image", imageFile);
 
@@ -23,12 +22,14 @@ form.addEventListener("submit", async (e) => {
         const response = await fetch(uploadUrl, { method: "POST", body: formData });
         const result = await response.json();
 
+        // 🔥 tampilkan data mentah ImgBB di layar HP
+        alert("DEBUG IMG DATA:\n\n" + JSON.stringify(result, null, 2));
+
         if (!result.success) return alert("Gagal upload foto ke ImgBB!");
 
-        // Pakai display_url (PERBAIKAN TERPENTING)
-        const imageUrl = result.data.display_url;
+        // sementara pakai apa saja, nanti saya cek dari JSON yang kamu kirim
+        const imageUrl = result.data.url || result.data.display_url || result.data.image?.url;
 
-        // Data motor
         const data = {
             brand: document.getElementById("brand").value,
             year: document.getElementById("year").value,
@@ -41,17 +42,16 @@ form.addEventListener("submit", async (e) => {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Simpan ke Firestore
         await db.collection("motor").add(data);
-
         alert("Motor berhasil di-upload!");
+
         form.reset();
 
     } catch (err) {
-        console.error(err);
-        alert("Terjadi kesalahan saat upload.");
+        alert("ERROR:\n" + err);
     }
 });
+
 
 // Load produk
 function loadProducts() {
@@ -70,33 +70,12 @@ function loadProducts() {
                 <p>Kondisi: ${d.condition}</p>
                 <p>Harga: Rp ${d.price.toLocaleString("id-ID")}</p>
                 <p>${d.desc}</p>
-
-                <a class="btn-wa" 
+                <a class="btn-wa"
                     href="https://wa.me/${d.sellerPhone}?text=${encodeURIComponent(`Halo, saya ingin tanya motor ${d.brand}`)}"
-                    target="_blank">
-                    Hubungi via WhatsApp
-                </a>
-
-                <button class="edit-btn">Edit</button>
-                <button class="delete-btn">Hapus</button>
+                    target="_blank">Hubungi via WA</a>
             `;
 
             productList.appendChild(card);
-
-            // Tombol Edit
-            card.querySelector(".edit-btn").addEventListener("click", async () => {
-                const newBrand = prompt("Ubah Merek Motor:", d.brand);
-                if (newBrand) {
-                    await db.collection("motor").doc(doc.id).update({ brand: newBrand });
-                }
-            });
-
-            // Tombol Hapus
-            card.querySelector(".delete-btn").addEventListener("click", async () => {
-                if (confirm("Yakin ingin menghapus motor ini?")) {
-                    await db.collection("motor").doc(doc.id).delete();
-                }
-            });
         });
     });
 }
