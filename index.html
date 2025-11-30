@@ -39,7 +39,8 @@
         <input type="text" id="brand" placeholder="Honda Beat, Vario, Nmax..." required>
 
         <label for="year">Tahun</label>
-        <input type="number" id="year" min="2000" max="2025" required>
+        <!-- PERBAIKAN: tahun bebas -->
+        <input type="number" id="year" required>
 
         <label for="km">Kilometer</label>
         <input type="number" id="km" min="0" required>
@@ -52,13 +53,15 @@
         </select>
 
         <label for="price">Harga (Rp)</label>
-        <input type="number" id="price" min="500000" required>
+        <!-- PERBAIKAN: harga bebas -->
+        <input type="number" id="price" required>
 
         <label for="desc">Deskripsi Motor</label>
         <textarea id="desc" placeholder="Keterangan tambahan motor..." required></textarea>
 
         <label for="sellerPhone">No. HP Penjual</label>
-        <input type="tel" id="sellerPhone" placeholder="628XXXXXXXXX" pattern="628[0-9]{7,12}" required>
+        <!-- PERBAIKAN: bebas ketik -->
+        <input type="text" id="sellerPhone" placeholder="628XXXXXXXXX" required>
 
         <button type="submit">Upload Motor</button>
     </form>
