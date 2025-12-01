@@ -1,9 +1,9 @@
-// Konfigurasi Firebase kamu
+// Konfigurasi Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyASx1L6_KVL_S0XJfb5Oh3FwM0cOYTronQ",
     authDomain: "raharjo-motor-tuban.firebaseapp.com",
     projectId: "raharjo-motor-tuban",
-    storageBucket: "raharjo-motor-tuban.firebasestorage.app",
+    storageBucket: "raharjo-motor-tuban.appspot.com", // FIX di sini
     messagingSenderId: "392547240984",
     appId: "1:392547240984:web:8c7ec5f0b25225a066c76d",
     measurementId: "G-WBPLNJ4ZGT"
@@ -11,3 +11,6 @@ const firebaseConfig = {
 
 // Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Inisialisasi Firestore
+const db = firebase.firestore();

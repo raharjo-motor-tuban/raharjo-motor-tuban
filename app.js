@@ -1,28 +1,51 @@
-// Init Firestore
-const db = firebase.firestore();
+// =======================================
+// PREVIEW FOTO
+// =======================================
+document.getElementById("image").addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+        const preview = document.createElement("img");
+        preview.src = URL.createObjectURL(file);
+        preview.style.width = "100%";
+        preview.style.borderRadius = "10px";
+        preview.style.marginTop = "10px";
 
-const form = document.getElementById("uploadForm");
-const productList = document.getElementById("product-list");
+        const old = document.getElementById("previewImg");
+        if (old) old.remove();
 
-// API Key ImgBB
-const imgbbApiKey = "1eb67c17f3cca1e60e3ee481ab5d205e";
+        preview.id = "previewImg";
+        this.insertAdjacentElement("afterend", preview);
+    }
+});
 
-// Upload Motor
-form.addEventListener("submit", async (e) => {
+
+// =======================================
+// UPLOAD MOTOR + GAMBAR → IMGBB
+// =======================================
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const imageFile = document.getElementById("image").files[0];
-    if (!imageFile) return alert("Upload foto dulu!");
 
-    const formData = new FormData();
-    formData.append("image", imageFile);
+    const file = document.getElementById("image").files[0];
+    if (!file) return alert("Pilih foto motor dulu!");
 
-    const uploadUrl = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;
-    const uploadResponse = await fetch(uploadUrl, { method: "POST", body: formData });
-    const uploadResult = await uploadResponse.json();
-    if (!uploadResult.success) return alert("Gagal upload gambar ke ImgBB!");
+    const apiKey = "69d0dfef34670e4f045bcad4aecb146f"; 
+    const form = new FormData();
+    form.append("image", file);
 
-    const imageUrl = uploadResult.data.url;
+    // Upload ke imgbb
+    const upload = await fetch("https://api.imgbb.com/1/upload?key=" + apiKey, {
+        method: "POST",
+        body: form
+    });
 
+    const result = await upload.json();
+    if (!result.data || !result.data.url) {
+        return alert("Gagal upload gambar!");
+    }
+
+    const imageUrl = result.data.url;
+
+    // Ambil semua input
     const data = {
         brand: document.getElementById("brand").value,
         year: document.getElementById("year").value,
@@ -31,54 +54,60 @@ form.addEventListener("submit", async (e) => {
         price: document.getElementById("price").value,
         desc: document.getElementById("desc").value,
         sellerPhone: document.getElementById("sellerPhone").value,
-        imageUrl: imageUrl,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        image: imageUrl,
+        time: Date.now()
     };
 
-    await db.collection("motor").add(data);
+    // Simpan ke Firestore
+    await db.collection("products").add(data);
+
     alert("Motor berhasil diupload!");
-    form.reset();
+    location.reload();
 });
 
-// Load Produk + Edit & Hapus
-function loadProducts() {
-    db.collection("motor").orderBy("createdAt", "desc").onSnapshot((snap) => {
-        productList.innerHTML = "";
+
+// =======================================
+// TAMPILKAN LIST MOTOR + TOMBOL HAPUS
+// =======================================
+db.collection("products")
+    .orderBy("time", "desc")
+    .onSnapshot((snap) => {
+        const list = document.getElementById("product-list");
+        list.innerHTML = "";
+
         snap.forEach((doc) => {
-            const d = doc.data();
-            const card = document.createElement("div");
-            card.className = "card";
+            const m = doc.data();
+            const id = doc.id;
 
-            card.innerHTML = `
-                <img src="${d.imageUrl}" alt="motor">
-                <h3>${d.brand} (${d.year})</h3>
-                <p>KM: ${d.km}</p>
-                <p>Kondisi: ${d.condition}</p>
-                <p>Harga: Rp ${d.price}</p>
-                <p>${d.desc}</p>
-                <a class="btn-wa" href="https://wa.me/${d.sellerPhone}?text=Halo,%20saya%20ingin%20tanya%20motor%20${d.brand}" target="_blank">Hubungi via WhatsApp</a>
-                <button class="edit-btn">Edit</button>
-                <button class="delete-btn">Hapus</button>
+            list.innerHTML += `
+                <div class="card">
+                    <img src="${m.image}" class="motor-img">
+                    <h3>${m.brand} (${m.year})</h3>
+                    <p><strong>KM:</strong> ${m.km}</p>
+                    <p><strong>Kondisi:</strong> ${m.condition}</p>
+                    <p><strong>Harga:</strong> Rp ${m.price}</p>
+                    <p>${m.desc}</p>
+
+                    <a href="https://wa.me/${m.sellerPhone}" class="btn-wa">
+                        Hubungi Penjual
+                    </a>
+
+                    <button class="btn-del" onclick="deleteMotor('${id}')">
+                        Hapus
+                    </button>
+                </div>
             `;
-
-            productList.appendChild(card);
-
-            // Edit
-            card.querySelector(".edit-btn").addEventListener("click", async () => {
-                const newBrand = prompt("Merek Motor:", d.brand);
-                if (newBrand) {
-                    await db.collection("motor").doc(doc.id).update({ brand: newBrand });
-                }
-            });
-
-            // Hapus
-            card.querySelector(".delete-btn").addEventListener("click", async () => {
-                if (confirm("Yakin ingin menghapus motor ini?")) {
-                    await db.collection("motor").doc(doc.id).delete();
-                }
-            });
         });
     });
-}
 
-loadProducts();
+
+// =======================================
+// FUNGSI HAPUS MOTOR
+// =======================================
+async function deleteMotor(id) {
+    const yakin = confirm("Yakin ingin menghapus motor ini?");
+    if (!yakin) return;
+
+    await db.collection("products").doc(id).delete();
+    alert("Motor dihapus!");
+}
